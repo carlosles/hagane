@@ -61,6 +61,7 @@ exclude = [
 max-complexity = 10
 per-file-ignores = [
     "setup.py: D100",  # missing docstring
+    "docs/source/conf.py: D100",
     "examples/*.py: D100,D101,D102,D103,D107",
 ]
 
