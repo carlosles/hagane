@@ -78,7 +78,10 @@ def states(
     # TODO: implement and use `at` optional argument.
     # accumulate(reversed(sm._change_log), func=replace, initial=sm)
     # return tuple(map(_state, reversed(sm._change_log)))
-    pass
+    if at is not None:
+        raise NotImplementedError
+    # initial_sm = type(sm)()
+    return tuple()
 
 
 def state(sm: Statemachine) -> State:

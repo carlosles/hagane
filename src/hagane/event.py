@@ -1,9 +1,13 @@
 """Event functionality."""
+from __future__ import annotations
+
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
 from typing import Any
+
+from hagane.state import Statemachine
 
 
 class EventType(Enum):
@@ -17,8 +21,8 @@ class Event:
     """Event container."""
 
     name: str
-    source: str
-    destination: str
-    effect: Callable[[Any], Any]
-    trigger_time: datetime
-    duration: timedelta
+    effect: Callable[[Any], list[Event]]
+    source: Statemachine | None = None
+    destination: Statemachine | None = None
+    trigger_time: datetime | timedelta | None = None
+    duration: timedelta | None = None
