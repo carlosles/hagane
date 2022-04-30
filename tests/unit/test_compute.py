@@ -2,7 +2,6 @@
 from dataclasses import field
 
 import pytest
-from sortedcontainers import SortedList
 
 from hagane import Event, Simulation, run, statemachine
 
@@ -26,11 +25,7 @@ def simulation() -> Simulation:
     """Return a sample simulation."""
     foo = Foo(1)
     components = tuple([foo])
-    events = SortedList(
-        [
-            Event(name='event-1', effect=sample_func, destination=foo),
-        ]
-    )
+    events = [Event(name='event-1', effect=sample_func, destination=foo)]
     return Simulation(components, event_queue=events)
 
 
