@@ -30,3 +30,4 @@ class Simulation:
 
 
 # Snapshot
+# TODO: consider heapq from standard library
