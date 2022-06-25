@@ -28,7 +28,7 @@ def run(sim: Simulation, until: int | datetime | timedelta) -> Simulation:
         case timedelta():
             raise NotImplementedError
         case _:
-            raise TypeError(f'"until" must be {int | datetime | timedelta}')
+            raise TypeError('"until" must be {int | datetime | timedelta}')
 
 
 def rewind(sim: Simulation, until: datetime | timedelta) -> Simulation:
