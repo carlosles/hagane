@@ -3,20 +3,20 @@ import asyncio
 from collections.abc import Awaitable
 
 
-async def park(car_aw: Awaitable[int]) -> int:
+async def park(car_aw: Awaitable[int], dt: int) -> int:
     """Park car."""
     car = await car_aw
     print(f'{car}: parking car')
-    car += 5
+    car += dt
     print(f'{car}: finished parking car')
     return car
 
 
-async def drive(car_aw: Awaitable[int]) -> int:
+async def drive(car_aw: Awaitable[int], dt: int) -> int:
     """Drive car."""
     car = await car_aw
     print(f'{car}: driving car')
-    car += 2
+    car += dt
     print(f'{car}: finished driving car')
     return car
 
@@ -31,7 +31,7 @@ async def make_car() -> int:
 
 def main() -> None:  # noqa: D103
     car_coro = make_car()
-    sim_coro = drive(park(car_coro))
+    sim_coro = drive(park(car_coro, dt=5), dt=2)
     result = asyncio.run(sim_coro)
     print(f'{result}: simulation finished')
 
