@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 from functools import wraps
 from typing import Any
 
+from sortedcontainers import SortedList
+
 # from itertools import accumulate
 
 
@@ -33,6 +35,9 @@ class StateChange:
 class Statemachine(ABC):
     """Statemachine container."""
 
+    _process_queue: SortedList[Process] = field(
+        default_factory=SortedList, kw_only=True, repr=False
+    )
     _change_log: deque[StateChange] = field(
         default_factory=deque, kw_only=True, repr=False
     )

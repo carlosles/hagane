@@ -64,17 +64,16 @@ class Car:
         return self.fuel_tank_size - self.fuel_tank_level
 
 
-def generate_cars(gas_station):
+def generate_car(gas_station):
     """Generate new cars that arrive at the gas station."""
-    for i in itertools.count():
-        time = random.randint(*T_INTER)
-        car = Car()
-        return hg.Event(
-            name=f'car-{i}',
-            effect=partial(refuel_at_station, station=gas_station),
-            destination=car,
-            trigger_time=time,
-        )
+    time = random.randint(*T_INTER)
+    car = Car()
+    return hg.Event(
+        name=f'car-{i}',
+        effect=partial(refuel_at_station, station=gas_station),
+        destination=car,
+        trigger_time=time,
+    )
 
 
 def refuel_at_station(car: Car, station: GasStation) -> list[hg.Event]:
@@ -90,9 +89,17 @@ def request_fuel_pump(car: Car, station) -> FuelPump:
     pass
 
 
+@hg.statemachine
+class Simulation:
+    n_cars: int = 0
+
+
 if __name__ == '__main__':
     print('Gas Station refuelling')
     random.seed(RANDOM_SEED)
+
+    sim = process(Simulation(), generate_car)
+    sim = hg.run(sim, until=10)
 
     gas_station = []
     fuel_pump = []
