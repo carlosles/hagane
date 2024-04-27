@@ -136,3 +136,6 @@ dmypy.json
 
 # Supporting literature
 literature/
+
+# direnv auto load environment
+.direnv/
