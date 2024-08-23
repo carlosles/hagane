@@ -38,17 +38,30 @@ def defer_for(process: Process, dx: float) -> Event:
     return (x + dx, process, next(eids))
 
 
-def run_car() -> Iterator[Event]:
-    while True:
-        yield defer_for(drive_car(), 10.0)
-        yield defer_for(park_car(), 3.0)
+def wait_for(dx: float) -> Event:
+    return (x + dx, nothing(), next(eids))
 
 
-def drive_car() -> Iterator[Event]:
+def nothing() -> Process:
     yield from ()
 
 
-def park_car() -> Iterator[Event]:
+def run_car() -> Process:
+    while True:
+        # Commented lines below are equivalent to those underneath.
+        #yield defer_for(drive_car(), 10.0)
+        #yield defer_for(park_car(), 3.0)
+        yield from drive_car()
+        yield wait_for(10.0)
+        yield from park_car()
+        yield wait_for(3.0)
+
+
+def drive_car() -> Process:
+    yield from ()
+
+
+def park_car() -> Process:
     yield from ()
 
 
