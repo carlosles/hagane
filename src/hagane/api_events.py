@@ -9,7 +9,7 @@ from more_itertools import take
 
 
 type Process = Iterator[Event]
-type Event = tuple[float, Process, int]
+type Event = tuple[float, int, Process]
 
 eids = count()
 queue: list[Event] = []
@@ -20,26 +20,26 @@ def run_sim(*processes):
     global queue, x
 
     for process in processes:
-        heappush(queue, (0.0, process, next(eids)))
+        heappush(queue, (0.0, next(eids), process))
     while queue:
         event = heappop(queue)
         yield event
-        x, process, _ = event
-        next_x, next_process, next_eid = next(process)
-        next_event = (next_x, chain(next_process, process), next_eid)
+        x, _, process = event
+        next_x, next_eid, next_process = next(process)
+        next_event = (next_x, next_eid, chain(next_process, process))
         heappush(queue, next_event)
 
 
 def defer_until(process: Process, until: float) -> Event:
-    return (until, process, next(eids))
+    return (until, next(eids), process)
 
 
 def defer_for(process: Process, dx: float) -> Event:
-    return (x + dx, process, next(eids))
+    return (x + dx, next(eids), process)
 
 
 def wait_for(dx: float) -> Event:
-    return (x + dx, nothing(), next(eids))
+    return (x + dx, next(eids), nothing())
 
 
 def nothing() -> Process:
