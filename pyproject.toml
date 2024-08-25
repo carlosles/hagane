@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "setuptools-scm"]
+requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -11,7 +11,7 @@ license = {file = "LICENSE"}
 classifiers = [
     "Programming Language :: Python :: 3",
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dependencies = [
     "more-itertools",
     "sortedcontainers",
@@ -22,6 +22,7 @@ dynamic = ["version", "description"]
 doc = ["sphinx"]
 test = ["pytest", "pytest-cov"]
 dev = [
+    "simpy",
     "pre-commit",
     "isort",
     "black",
@@ -44,7 +45,7 @@ filter_files = true
 
 [tool.black]
 line-length = 79
-target-version = ["py310"]
+target-version = ["py312"]
 include = '\.pyi?$'
 skip-string-normalization = true
 
@@ -68,7 +69,7 @@ per-file-ignores = [
 ]
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.12"
 strict = true
 exclude = [
     '(build/)',
