@@ -1,5 +1,6 @@
 """Exploratory API using events."""
 
+from collections import deque
 from collections.abc import Iterator
 from heapq import heappop, heappush
 from itertools import chain, count, islice
@@ -7,9 +8,7 @@ import sys
 
 
 type Process = Iterator[Event]
-type Event = WaitEvent | ProcessEvent
-type WaitEvent = tuple[float, int]
-type ProcessEvent = tuple[float, int, Process]
+type Event = tuple[float, int, deque[Process]]
 
 eids = count(start=1)
 queue: list[Event] = []
@@ -20,35 +19,36 @@ def run_sim(*processes: Process) -> Process:
     global queue, x
 
     for proc in processes:
-        heappush(queue, (x, next(eids), proc))
+        heappush(queue, (x, next(eids), deque([proc])))
     while queue:
         event = heappop(queue)
         yield event
-        x, _, process = event
+        x, _, processes = event
         try:
-            match next(process):
-                case (next_x, eid) as wait_event:  # A wait event.
-                    yield wait_event
-                    next_event = (next_x, next(eids), process)
-                case (next_x, eid, next_process):  # A process event.
-                    next_event = (next_x, eid, chain(next_process, process))
-                case invalid_event:
-                    raise ValueError(f'Invalid event {invalid_event}')
+            process = processes.popleft()
+            next_x, next_eid, next_processes = next(process)
+            next_processes.append(process)
+            next_processes.extend(processes)
+            next_event = (next_x, next_eid, next_processes)
             heappush(queue, next_event)
-        except StopIteration:
+        except (IndexError, StopIteration):
             pass  # Do nothing.
 
 
-def defer_until(process: Process, until: float) -> ProcessEvent:
-    return (until, next(eids), process)
+def defer_until(process: Process, until: float) -> Event:
+    return (until, next(eids), deque(process))
 
 
-def defer_for(process: Process, dx: float) -> ProcessEvent:
-    return (x + dx, next(eids), process)
+def defer_for(process: Process, dx: float) -> Event:
+    return (x + dx, next(eids), deque(process))
 
 
-def wait_for(dx: float) -> WaitEvent:
-    return (x + dx, next(eids))
+def wait_for(dx: float) -> Event:
+    return (x + dx, next(eids), deque(nothing()))
+
+
+def nothing():
+    yield from ()
 
 
 def run_car() -> Process:
